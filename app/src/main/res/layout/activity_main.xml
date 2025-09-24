@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/eerieBlack"
     tools:context=".MainActivity">
 
     <ImageView
@@ -60,7 +61,7 @@
         android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/default_button"
-        android:textColor="@color/eerieBlack"
+        android:textColor="@color/whiteSmoke"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toTopOf="@id/btnCadastro"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/criar_conta"
-        android:textColor="@color/eerieBlack"
+        android:textColor="@color/whiteSmoke"
         android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/transparent_button"
