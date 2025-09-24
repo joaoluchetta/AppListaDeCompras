@@ -43,6 +43,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/textBuscar"
             app:layout_constraintBottom_toBottomOf="@id/textBuscar"
+
             />
 
         <TextView
