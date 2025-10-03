@@ -4,7 +4,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="eerieBlack">#212121</color>
     <color name="chryslerBlue">#4518D7</color>
-    <color name="whiteSmoke">#F4F4F4</color>
+    <color name="antiFlashWhite">#F3F3F4</color>
     <color name="grayLight">#D3D3D3</color>
-    <color name="springGreen">#20FC8F</color>
+    <color name="honeydrew">#EBF6DF</color>
+    <color name="emerald">#2ECC71</color>
+    <color name="darkCyan">#2C8B82</color>
+    <color name="caribbeanCurrent">#00635D</color>
 </resources>

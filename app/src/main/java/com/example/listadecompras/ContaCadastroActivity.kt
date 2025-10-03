@@ -1,5 +1,6 @@
 package com.example.listadecompras
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -22,5 +23,8 @@ class ContaCadastroActivity : AppCompatActivity() {
             insets
         }
 
+        binding.btnCadastrar.setOnClickListener {
+            finish();
+        }
     }
 }
