@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnCadastro.setOnClickListener {
-            val intentCadastroConta = Intent(this, ContaCadastroActivity::class.java)
-            startActivity(intentCadastroConta)
+            val intentContaCadastro = Intent(this, ContaCadastroActivity::class.java)
+            startActivity(intentContaCadastro)
         }
     }
 }

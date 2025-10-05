@@ -19,5 +19,8 @@
     <string name="minhas_listas">Minhas Listas</string>
     <string name="logout">Logout</string>
     <string name="voltar">Voltar</string>
+    <string name="tituloItem">Título</string>
+    <string name="imagem_da_lista">Imagem da lista</string>
+    <string name="adicionar">Adicionar</string>
 
 </resources>
