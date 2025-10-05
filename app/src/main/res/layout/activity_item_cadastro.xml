@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemCadastroScreen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ItemCadastroActivity">
+
+
+
+    <!-- Zona de Título -->
+        <TextView
+            android:id="@+id/tituloDeItemCadastro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cadastrar Item"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/chryslerBlue"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+        <!-- Zona de Nome do item -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/InputNome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="Nome do Item"
+            app:layout_constraintTop_toBottomOf="@id/tituloDeItemCadastro"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+        <!-- Zona de Quantidade do item -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputQuantidadeLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Quantidade"
+            app:layout_constraintTop_toBottomOf="@id/InputNome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputQuantidade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+            <!-- Zona de Unidade do item -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputUnidadeLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Unidade(exemplo: kg,L)"
+                app:layout_constraintTop_toBottomOf="@id/inputQuantidadeLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputUnidade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <!-- Zona de Categoria do item -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputCategoriaLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Categoria"
+            app:layout_constraintTop_toBottomOf="@id/inputUnidadeLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/dropdownCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="true"
+                android:clickable="true"
+                android:hint="Selecione a categoria" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Zona dos Botões -->
+    <Button
+        android:id="@+id/btnCancelar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="8dp"
+        android:text="Cancelar"
+        android:background="@drawable/transparent_button"
+        android:textColor="@color/chryslerBlue"
+        app:backgroundTint="@null"
+
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnAdicionar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontalWeight="1" />
+
+    <Button
+        android:id="@+id/btnAdicionar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="15dp"
+        android:text="Adicionar"
+        android:background="@drawable/default_button"
+        android:textColor="@color/whiteSmoke"
+        app:backgroundTint="@null"
+
+
+        app:layout_constraintStart_toEndOf="@id/btnCancelar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontalWeight="1" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
