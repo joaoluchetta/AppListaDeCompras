@@ -23,5 +23,6 @@
     <string name="imagem_da_lista">Imagem da lista</string>
     <string name="adicionar">Adicionar</string>
     <string name="titulo_da_lista">Titulo da Lista</string>
+    <string name="editar">Editar</string>
 
 </resources>
