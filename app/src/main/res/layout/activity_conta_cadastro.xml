@@ -96,7 +96,7 @@
         android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/default_button"
-        android:textColor="@color/antiFlashWhite"
+        android:textColor="@color/eerieBlack"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

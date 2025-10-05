@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.listadecompras.databinding.ActivityHomeBinding
+import com.google.android.material.snackbar.Snackbar
 
 
 class HomeActivity : AppCompatActivity() {
@@ -37,7 +38,11 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        adapter = ListaItemAdapter()
+        adapter = ListaItemAdapter{ itemClicado ->
+
+
+            Snackbar.make(binding.root, "Você clicou em: ${itemClicado.nomeLista}", Snackbar.LENGTH_SHORT).show()
+        }
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = GridLayoutManager(this, 2)
 
@@ -50,5 +55,10 @@ class HomeActivity : AppCompatActivity() {
             val intentLista = Intent(this, ListaActivity::class.java)
             launcher.launch(intentLista)
         }
+
+        binding.btnLogout.setOnClickListener {
+            finish()
+        }
+
     }
 }

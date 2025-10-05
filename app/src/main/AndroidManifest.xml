@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ListaDeCompras">
         <activity
+            android:name=".ItemProdutoActivity"
+            android:exported="false" />
+        <activity
             android:name=".ListaActivity"
             android:exported="true" />
         <activity
@@ -25,13 +28,10 @@
         </activity>
         <activity
             android:name=".ContaCadastroActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".HomeActivity"
-            android:exported="true"/>
-<!--        <activity-->
-<!--            android:name=".ListaItem"-->
-<!--            android:exported="true"/>-->
+            android:exported="true" />
     </application>
 
 </manifest>

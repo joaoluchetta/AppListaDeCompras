@@ -2,6 +2,7 @@ package com.example.listadecompras
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,11 @@ class ListaActivity : AppCompatActivity() {
         binding.btnAdicionar.setOnClickListener {
             val nomeLista = binding.editLista.text.toString()
             val imagemLista = R.drawable.ic_default_imagem // por enquanto, fixa
+
+            if (nomeLista.isEmpty()) {
+                Toast.makeText(this, "Preencha o campo Nome da Lista", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val intent = Intent()
             intent.putExtra("nomeLista", nomeLista)
