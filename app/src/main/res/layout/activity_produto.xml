@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/homeScreen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".HomeActivity">
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ItemProdutoActivity">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textBuscar"
@@ -16,7 +16,7 @@
         app:boxStrokeColor="@color/emerald"
         app:endIconTint="@color/eerieBlack"
         app:hintAnimationEnabled="true"
-        app:layout_constraintEnd_toStartOf="@id/btnLogout"
+        app:layout_constraintEnd_toStartOf="@id/btnEditar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:startIconDrawable="@drawable/ic_lupa_24px"
@@ -29,16 +29,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLogout"
+        android:id="@+id/btnEditar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/logout"
         android:textColor="@color/eerieBlack"
         android:layout_marginHorizontal="20dp"
-        android:textAllCaps="false"
         android:backgroundTint="@color/emerald"
+        android:text="@string/editar"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_lapis_24px"
         app:strokeColor="@color/emerald"
-        app:icon="@drawable/ic_logout_24px"
         app:iconTint="@color/eerieBlack"
         style="@style/Widget.MaterialComponents.Button"
         app:layout_constraintTop_toTopOf="@id/textBuscar"
@@ -47,18 +47,18 @@
         app:layout_constraintBottom_toBottomOf="@id/textBuscar"
         />
 
-        <TextView
-            android:id="@+id/textTituloHome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/minhas_listas"
-            android:textColor="@color/caribbeanCurrent"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textBuscar" />
+    <TextView
+        android:id="@+id/textTituloHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/titulo_da_lista"
+        android:textColor="@color/caribbeanCurrent"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textBuscar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
@@ -79,4 +79,4 @@
         android:backgroundTint="@color/emerald"
         android:src="@drawable/ic_mais_24px"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,22 +13,24 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/crie_sua_conta"
-        android:textColor="@color/chryslerBlue"
-        android:textSize="24sp"
+        android:textColor="@color/caribbeanCurrent"
+        android:textSize="34sp"
         android:textStyle="bold"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <EditText
-        android:id="@+id/editLogin"
+        android:id="@+id/inputNome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
         android:layout_marginTop="20dp"
         android:autofillHints="emailAddress"
         android:background="@drawable/rounded_corner"
-        android:hint="@string/login"
-        android:inputType="textEmailAddress"
+        android:hint="@string/digite_seu_nome"
+        android:inputType="text"
         android:padding="16dp"
         android:textColor="@color/eerieBlack"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,11 +38,28 @@
         app:layout_constraintTop_toBottomOf="@+id/tituloContaCadastro" />
 
     <EditText
+        android:id="@+id/inputEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
+        android:autofillHints="emailAddress"
+        android:background="@drawable/rounded_corner"
+        android:hint="@string/digite_seu_email"
+        android:inputType="textEmailAddress"
+        android:padding="16dp"
+        android:textColor="@color/eerieBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputNome"
+        app:hintAnimationEnabled="true"/>
+
+    <EditText
         android:id="@+id/editSenha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:autofillHints="password"
         android:background="@drawable/rounded_corner"
         android:hint="@string/senha"
@@ -49,41 +68,39 @@
         android:textColor="@color/eerieBlack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/inputEmail"
+        app:hintAnimationEnabled="true"/>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
         android:id="@+id/inputSenha"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
-        android:hint="Digite sua senha aqui!"
-        app:hintAnimationEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editSenha">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputSenha1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textBuscar2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
+        android:autofillHints="password"
+        android:background="@drawable/rounded_corner"
         android:hint="@string/confirme_a_senha"
-        app:hintAnimationEnabled="true"
+        android:inputType="textPassword"
+        android:padding="16dp"
+        android:textColor="@color/eerieBlack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/inputSenha">
+        app:layout_constraintTop_toBottomOf="@id/editSenha"
+        app:hintAnimationEnabled="true"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputBuscar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
+    <Button
+        android:id="@+id/btnCadastrar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cadastrar"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/default_button"
+        android:textColor="@color/eerieBlack"
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

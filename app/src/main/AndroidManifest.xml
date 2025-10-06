@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ListaDeCompras">
         <activity
+            android:name=".ItemProdutoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListaActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -22,19 +28,14 @@
         </activity>
         <activity
             android:name=".ContaCadastroActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".HomeActivity"
-            android:exported="true">
-        </activity>
-
+            android:exported="true" />
         <activity
             android:name=".ItemCadastroActivity"
             android:exported="true">
         </activity>
-
-
     </application>
 
 </manifest>

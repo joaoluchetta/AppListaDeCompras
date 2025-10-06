@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/eerieBlack"
+    android:background="@color/antiFlashWhite"
     tools:context=".MainActivity">
 
     <ImageView
@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/ic_listify_logo"
+        android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintTop_toTopOf="parent"
@@ -61,7 +62,7 @@
         android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/default_button"
-        android:textColor="@color/whiteSmoke"
+        android:textColor="@color/eerieBlack"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toTopOf="@id/btnCadastro"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/criar_conta"
-        android:textColor="@color/whiteSmoke"
+        android:textColor="@color/darkCyan"
         android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/transparent_button"
