@@ -19,8 +19,8 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit) : R
 
     override fun onBindViewHolder(holder: ItemProdutoViewHolder, position: Int) {
         val item = itensLista[position]
-        holder.binding.itemImagem.setImageResource(item.idImage ?: R.drawable.ic_lupa_24px)
-        holder.binding.nomeItem.text = item.nomeItem
+        holder.binding.itemImagem.setImageResource(item.idImage ?: R.drawable.ic_outros_24px)
+        holder.binding.nomeItem.text = "${item.nomeItem} (${item.categoria})"
         holder.binding.quantidadeItem.text = "${item.quantidadeItem} ${item.unidadeItem}" // Exibe quantidade e unidade
 
         // Clicar para marcar/desmarcar o item

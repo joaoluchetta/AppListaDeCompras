@@ -15,14 +15,13 @@
         android:background="@drawable/border_background"
         tools:ignore="MissingConstraints">
 
-
         <ImageView
             android:id="@+id/itemImagem"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@string/imagem_da_lista"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@drawable/ic_lista_default" />
 
         <TextView
             android:id="@+id/itemTitulo"

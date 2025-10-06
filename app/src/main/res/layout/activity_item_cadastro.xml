@@ -10,9 +10,6 @@
     android:padding="16dp"
     tools:context=".ItemCadastroActivity">
 
-
-
-    <!-- Zona de Título -->
         <TextView
             android:id="@+id/tituloDeItemCadastro"
             android:layout_width="wrap_content"
@@ -25,71 +22,66 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-
-
-        <!-- Zona de Nome do item -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/InputNome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:hint="@string/nome_do_item"
+            app:hintTextColor="@color/emerald"
+            app:boxStrokeColor="@color/emerald"
             app:layout_constraintTop_toBottomOf="@id/tituloDeItemCadastro"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputNome"
+            android:textColor="@color/eerieBlack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
-        <!-- Zona de Quantidade do item -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputQuantidadeLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="@string/quantidade"
+            app:hintTextColor="@color/emerald"
+            app:boxStrokeColor="@color/emerald"
             app:layout_constraintTop_toBottomOf="@id/InputNome"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputQuantidade"
+                android:textColor="@color/eerieBlack"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
-            <!-- Zona de Unidade do item -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputUnidadeLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:hint="@string/unidade_exemplo_kg_l"
+                app:hintTextColor="@color/emerald"
+                app:boxStrokeColor="@color/emerald"
                 app:layout_constraintTop_toBottomOf="@id/inputQuantidadeLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputUnidade"
+                    android:textColor="@color/eerieBlack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
-
-        <!-- Zona de Categoria do item -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputCategoriaLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -97,6 +89,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="@string/categoria"
+            app:hintTextColor="@color/emerald"
+            app:boxStrokeColor="@color/emerald"
             app:layout_constraintTop_toBottomOf="@id/inputUnidadeLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -105,7 +99,8 @@
                 android:id="@+id/dropdownCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Categoria"
+                android:text="@string/categoria"
+                android:textColor="@color/eerieBlack"
                 android:inputType="none"
                 android:focusable="true"
                 android:clickable="true"

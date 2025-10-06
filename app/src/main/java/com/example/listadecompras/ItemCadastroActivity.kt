@@ -13,7 +13,6 @@ import com.example.listadecompras.databinding.ActivityItemCadastroBinding
 class ItemCadastroActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityItemCadastroBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -46,8 +45,17 @@ class ItemCadastroActivity : AppCompatActivity() {
                 putExtra("quantidadeItem", quantidadeItem)
                 putExtra("unidadeItem", unidadeItem)
                 putExtra("categoriaItem", categoriaItem)
-                // Exemplo de como passar um ID de imagem (você pode expandir para ter opções)
-                putExtra("idImage", R.drawable.ic_lupa_24px)
+
+                when (categoriaItem) {
+                    "Fruta" -> putExtra("idImage", R.drawable.ic_frutas_24px)
+                    "Carne" -> putExtra("idImage", R.drawable.ic_carne_24px)
+                    "Verdura" -> putExtra("idImage", R.drawable.ic_verduras_24px)
+                    "Snacks" -> putExtra("idImage", R.drawable.ic_snack_24px)
+                    else -> {
+                        putExtra("idImage", R.drawable.ic_outros_24px)
+                    }
+                }
+
             }
 
             setResult(RESULT_OK, intent)

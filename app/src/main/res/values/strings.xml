@@ -30,7 +30,7 @@
     <string name="deletar">Deletar</string>
     <string name="cadastrar_item">Cadastrar Item</string>
     <string name="nome_do_item">Nome do Item</string>
-    <string name="unidade_exemplo_kg_l">Unidade(exemplo: kg,L)</string>
+    <string name="unidade_exemplo_kg_l">Unidade(exemplos: kg,L,un)</string>
     <string name="categoria">Categoria</string>
     <string name="selecione_a_categoria">Selecione a categoria</string>
 
@@ -40,6 +40,7 @@
         <item>Carne</item>
         <item>Verdura</item>
         <item>Snacks</item>
+        <item>Outros</item>
     </string-array>
 
 

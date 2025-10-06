@@ -7,5 +7,5 @@
     <corners
         android:radius="0dp" />
     <solid
-        android:color="@color/grayLight" />
+        android:color="@color/nyanza" />
 </shape>

@@ -28,7 +28,7 @@ class ItemProdutoActivity : AppCompatActivity() {
                 val quantidadeItem = result.data!!.getIntExtra("quantidadeItem", 0)
                 val unidadeItem = result.data!!.getStringExtra("unidadeItem") ?: ""
                 val categoriaItem = result.data!!.getStringExtra("categoriaItem") ?: ""
-                val idImage = result.data!!.getIntExtra("idImage", R.drawable.ic_lupa_24px)
+                val idImage = result.data!!.getIntExtra("idImage", R.drawable.ic_outros_24px)
 
                 // Crie o objeto ItemProduto com todos os campos
                 val novoProduto = ItemProduto(
