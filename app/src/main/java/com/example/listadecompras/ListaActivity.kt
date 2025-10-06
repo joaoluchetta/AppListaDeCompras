@@ -17,6 +17,9 @@ import com.google.gson.Gson
 class ListaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListaBinding
     private var imagemUri: Uri? = null
+    private var modoEdicao = false
+    private var idListaPai: Long = -1L
+    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +32,35 @@ class ListaActivity : AppCompatActivity() {
             insets
         }
 
+        // Receber dados do Intent
+        modoEdicao = intent.getBooleanExtra("modoEdicao", false)
+        idListaPai = intent.getLongExtra("idListaPai", -1L)
+
+        // Se estiver no modo de edição, preencher os campos com os dados existentes
+        if (modoEdicao) {
+            val nomeLista = intent.getStringExtra("nomeLista")
+            val imagemLista = intent.getStringExtra("imagemLista")
+
+            binding.editLista.setText(nomeLista)
+            binding.btnAdicionar.text = "Salvar Alterações"
+
+            if (imagemLista != null) {
+                // Tenta carregar a imagem de drawable ou de uma URI
+                val imageResId = resources.getIdentifier(imagemLista, "drawable", packageName)
+                if (imageResId != 0) {
+                    binding.imageView.setImageResource(imageResId)
+                } else {
+                    imagemUri = Uri.parse(imagemLista)
+                    binding.imageView.setImageURI(imagemUri)
+                }
+            }
+        }
+
+
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
                 binding.imageView.setImageURI(uri)
-                imagemUri = uri // 2. Salva a URI na variável
+                imagemUri = uri
             }
         }
         binding.btnAddImageLista.setOnClickListener {
@@ -47,21 +75,42 @@ class ListaActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val novaLista = ListaItem(nomeLista = nomeLista, idImage = imagemUri?.toString())
-
-            salvarNovaLista(novaLista)
+            if (modoEdicao) {
+                salvarAlteracoesLista(nomeLista, imagemUri?.toString())
+            } else {
+                val novaLista = ListaItem(nomeLista = nomeLista, idImage = imagemUri?.toString())
+                salvarNovaLista(novaLista)
+            }
             finish()
         }
     }
 
     private fun salvarNovaLista(novaLista: ListaItem) {
-        val gson = Gson()
         val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
         val json = sharedPref.getString("listas_compras", null)
         val tipo = object : TypeToken<MutableList<ListaItem>>() {}.type
         val listas = gson.fromJson<MutableList<ListaItem>>(json, tipo) ?: mutableListOf()
 
         listas.add(novaLista)
+
+        val editor = sharedPref.edit()
+        editor.putString("listas_compras", gson.toJson(listas))
+        editor.apply()
+    }
+
+    private fun salvarAlteracoesLista(nome: String, idImage: String?) {
+        val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
+        val json = sharedPref.getString("listas_compras", null)
+        val tipo = object : TypeToken<MutableList<ListaItem>>() {}.type
+        val listas = gson.fromJson<MutableList<ListaItem>>(json, tipo) ?: mutableListOf()
+
+        // Encontra a lista pelo ID
+        val listaParaEditar = listas.find { it.id == idListaPai }
+
+        if (listaParaEditar != null) {
+            listaParaEditar.nomeLista = nome
+            listaParaEditar.idImage = idImage
+        }
 
         val editor = sharedPref.edit()
         editor.putString("listas_compras", gson.toJson(listas))

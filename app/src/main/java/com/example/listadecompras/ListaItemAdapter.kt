@@ -24,7 +24,7 @@ class ListaItemAdapter(private val onClickListener: (ListaItem) -> Unit,
         if (item.idImage != null) {
             try {
                 // Tenta converter para Int (se for um drawable)
-                val resId = item.idImage.toInt()
+                val resId = item.idImage!!.toInt()
                 holder.binding.itemImagem.setImageResource(resId)
             } catch (e: NumberFormatException) {
                 // Se não for Int, é uma URI, então carrega a partir dela
@@ -32,7 +32,7 @@ class ListaItemAdapter(private val onClickListener: (ListaItem) -> Unit,
             }
         } else {
             // Caso a imagem seja nula, use o placeholder
-            holder.binding.itemImagem.setImageResource(R.drawable.ic_launcher_foreground)
+            holder.binding.itemImagem.setImageResource(R.drawable.ic_lista_default)
         }
         holder.binding.itemTitulo.text = item.nomeLista
 

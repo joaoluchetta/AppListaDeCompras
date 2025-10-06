@@ -14,11 +14,14 @@ import com.example.listadecompras.databinding.ActivityHomeBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import android.text.TextWatcher
+import android.text.Editable
 
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var adapter: ListaItemAdapter
+    private var listasSalvas: List<ListaItem> = emptyList()
 
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -76,6 +79,19 @@ class HomeActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.inputBuscar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Filtra a lista sempre que o texto muda
+                filterList(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+
     }
 
     private fun carregarListas() {
@@ -83,10 +99,16 @@ class HomeActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
         val json = sharedPref.getString("listas_compras", null)
         val tipo = object : TypeToken<List<ListaItem>>() {}.type
-        val listasSalvas: List<ListaItem> = gson.fromJson(json, tipo) ?: emptyList()
+        listasSalvas = gson.fromJson(json, tipo) ?: emptyList()
         (adapter as ListaItemAdapter).setLista(listasSalvas)
     }
 
+    private fun filterList(query: String) {
+        val filteredList = listasSalvas.filter {
+            it.nomeLista.contains(query, ignoreCase = true)
+        }
+        (adapter as ListaItemAdapter).setLista(filteredList)
+    }
 
     private fun removerLista(item: ListaItem) {
         val gson = Gson()

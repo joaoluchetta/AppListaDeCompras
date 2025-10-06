@@ -13,12 +13,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.listadecompras.databinding.ActivityProdutoBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import android.text.TextWatcher
+import android.text.Editable
+import android.view.View
+import com.google.android.material.snackbar.Snackbar
 
 class ItemProdutoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProdutoBinding
     private lateinit var adapter: ItemProdutoAdapter
     private var idListaPai: Long = -1L
     private val gson = Gson()
+    private var listaCompletaProdutos: List<ItemProduto> = emptyList()
 
     private val cadastroLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -60,9 +65,18 @@ class ItemProdutoActivity : AppCompatActivity() {
         idListaPai = intent.getLongExtra("idListaPai", -1L)
 
         // Configurar o RecyclerView
-        adapter = ItemProdutoAdapter { itemClicado ->
-            Toast.makeText(this, "Item: ${itemClicado.nomeItem}", Toast.LENGTH_SHORT).show()
-        }
+        adapter = ItemProdutoAdapter(
+            onClickListener = { itemClicado ->
+                Toast.makeText(this, "Item: ${itemClicado.nomeItem}", Toast.LENGTH_SHORT).show()
+            },
+            onSelectionChanged = { selectedCount ->
+                if (selectedCount > 0) {
+                    binding.btnDelete.visibility = View.VISIBLE
+                } else {
+                    binding.btnDelete.visibility = View.GONE
+                }
+            }
+        )
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
@@ -74,11 +88,38 @@ class ItemProdutoActivity : AppCompatActivity() {
         }
 
         binding.btnEditar.setOnClickListener {
-            val intentLista = Intent(this, ListaActivity::class.java).apply {
-                putExtra("modoEdicao", true)
-                putExtra("idListaPai", idListaPai)
+            // Carrega os dados da lista antes de abrir a tela de edição
+            val listaParaEditar = carregarDadosListaPai()
+            if (listaParaEditar != null) {
+                val intentLista = Intent(this, ListaActivity::class.java).apply {
+                    putExtra("modoEdicao", true)
+                    putExtra("idListaPai", idListaPai)
+                    putExtra("nomeLista", listaParaEditar.nomeLista)
+                    putExtra("imagemLista", listaParaEditar.idImage)
+                }
+                startActivity(intentLista)
+            } else {
+                Toast.makeText(this, "Erro: Lista não encontrada", Toast.LENGTH_SHORT).show()
             }
-            startActivity(intentLista)
+        }
+
+        binding.inputBuscar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Não é necessário para essa implementação
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Filtra a lista sempre que o texto muda
+                filterList(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Não é necessário para essa implementação
+            }
+        })
+
+        binding.btnDelete.setOnClickListener {
+            removerItens()
         }
     }
 
@@ -87,9 +128,18 @@ class ItemProdutoActivity : AppCompatActivity() {
             val sharedPref = getSharedPreferences("produtos_lista_${idListaPai}", Context.MODE_PRIVATE)
             val json = sharedPref.getString("produtos", null)
             val type = object : TypeToken<List<ItemProduto>>() {}.type
-            val produtosSalvos: List<ItemProduto> = gson.fromJson(json, type) ?: emptyList()
-            adapter.setItens(produtosSalvos)
+
+            listaCompletaProdutos = gson.fromJson(json, type) ?: emptyList()
+
+            adapter.setItens(listaCompletaProdutos)
         }
+    }
+
+    private fun filterList(query: String) {
+        val filteredList = listaCompletaProdutos.filter {
+            it.nomeItem.contains(query, ignoreCase = true)
+        }
+        adapter.setItens(filteredList)
     }
 
     private fun salvarProdutos() {
@@ -101,5 +151,21 @@ class ItemProdutoActivity : AppCompatActivity() {
                 apply()
             }
         }
+    }
+
+    private fun removerItens() {
+        adapter.removerItensSelecionados()
+        salvarProdutos() // Salva a lista atualizada no SharedPreferences
+        Snackbar.make(binding.root, "Itens removidos!", Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun carregarDadosListaPai(): ListaItem? {
+        val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
+        val json = sharedPref.getString("listas_compras", null)
+        val type = object : TypeToken<List<ListaItem>>() {}.type
+        val listasSalvas: List<ListaItem> = gson.fromJson(json, type) ?: emptyList()
+
+        // Busca a lista pelo ID
+        return listasSalvas.find { it.id == idListaPai }
     }
 }

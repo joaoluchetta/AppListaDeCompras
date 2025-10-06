@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/imagem_da_categoria"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_lupa_24px"
+        android:src="@drawable/ic_outros_24px"
         app:layout_constraintEnd_toStartOf="@id/layoutProdutos"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

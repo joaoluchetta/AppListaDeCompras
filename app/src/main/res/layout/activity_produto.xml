@@ -79,4 +79,16 @@
         android:backgroundTint="@color/emerald"
         android:src="@drawable/ic_mais_24px"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:backgroundTint="@color/red"
+        android:src="@drawable/ic_lixo_24px"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+       />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

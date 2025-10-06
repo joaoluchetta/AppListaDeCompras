@@ -6,7 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listadecompras.databinding.ActivityItemProdutoBinding
 
-class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit) : RecyclerView.Adapter<ItemProdutoAdapter.ItemProdutoViewHolder>() {
+class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
+                         private val onSelectionChanged: (Int) -> Unit) : RecyclerView.Adapter<ItemProdutoAdapter.ItemProdutoViewHolder>() {
     private val itensLista = mutableListOf<ItemProduto>()
 
     inner class ItemProdutoViewHolder(val binding: ActivityItemProdutoBinding) :
@@ -24,7 +25,11 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit) : R
         holder.binding.quantidadeItem.text = "${item.quantidadeItem} ${item.unidadeItem}" // Exibe quantidade e unidade
 
         // Clicar para marcar/desmarcar o item
-        holder.binding.checkBoxItem.isChecked = item.checkBoxItem
+
+        holder.binding.checkBoxItem.setOnCheckedChangeListener { _, isChecked ->
+            item.checkBoxItem = isChecked
+            onSelectionChanged(getItensSelecionados().size) // Notifica a Activity
+        }
 
         holder.itemView.setOnClickListener {
             onClickListener(item)
@@ -34,6 +39,7 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit) : R
     fun adicionarItem(item: ItemProduto) {
         itensLista.add(item)
         notifyItemInserted(itensLista.size - 1)
+        onSelectionChanged(getItensSelecionados().size)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -41,6 +47,18 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit) : R
         itensLista.clear()
         itensLista.addAll(novaLista)
         notifyDataSetChanged()
+    }
+
+    fun getItensSelecionados(): List<ItemProduto> {
+        return itensLista.filter { it.checkBoxItem }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun removerItensSelecionados() {
+        val itensParaRemover = getItensSelecionados()
+        itensLista.removeAll(itensParaRemover)
+        notifyDataSetChanged()
+        onSelectionChanged(0) // Notifica a Activity que a seleção foi limpa
     }
 
     fun getItens(): List<ItemProduto> {
