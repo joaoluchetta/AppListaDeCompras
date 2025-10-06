@@ -24,5 +24,23 @@
     <string name="adicionar">Adicionar</string>
     <string name="titulo_da_lista">Titulo da Lista</string>
     <string name="editar">Editar</string>
+    <string name="imagem_da_categoria">imagem da categoria</string>
+    <string name="quantidade">quantidade</string>
+    <string name="nome_produto">Nome Produto</string>
+    <string name="deletar">Deletar</string>
+    <string name="cadastrar_item">Cadastrar Item</string>
+    <string name="nome_do_item">Nome do Item</string>
+    <string name="unidade_exemplo_kg_l">Unidade(exemplo: kg,L)</string>
+    <string name="categoria">Categoria</string>
+    <string name="selecione_a_categoria">Selecione a categoria</string>
+
+
+    <string-array name="categorias_array">
+        <item>Fruta</item>
+        <item>Carne</item>
+        <item>Verdura</item>
+        <item>Snacks</item>
+    </string-array>
+
 
 </resources>
