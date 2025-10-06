@@ -32,6 +32,10 @@
         <activity
             android:name=".HomeActivity"
             android:exported="true" />
+        <activity
+            android:name=".ItemCadastroActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
