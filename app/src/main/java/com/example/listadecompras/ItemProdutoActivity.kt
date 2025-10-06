@@ -88,7 +88,7 @@ class ItemProdutoActivity : AppCompatActivity() {
         }
 
         binding.btnEditar.setOnClickListener {
-            // Carrega os dados da lista antes de abrir a tela de edição
+
             val listaParaEditar = carregarDadosListaPai()
             if (listaParaEditar != null) {
                 val intentLista = Intent(this, ListaActivity::class.java).apply {
@@ -109,7 +109,6 @@ class ItemProdutoActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Filtra a lista sempre que o texto muda
                 filterList(s.toString())
             }
 
@@ -155,7 +154,7 @@ class ItemProdutoActivity : AppCompatActivity() {
 
     private fun removerItens() {
         adapter.removerItensSelecionados()
-        salvarProdutos() // Salva a lista atualizada no SharedPreferences
+        salvarProdutos()
         Snackbar.make(binding.root, "Itens removidos!", Snackbar.LENGTH_SHORT).show()
     }
 

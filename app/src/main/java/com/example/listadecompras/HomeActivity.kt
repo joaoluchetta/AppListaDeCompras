@@ -139,6 +139,6 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        carregarListas() // Recarrega as listas sempre que a tela volta a ser visível
+        carregarListas()
     }
 }

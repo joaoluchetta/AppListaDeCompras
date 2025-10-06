@@ -23,15 +23,12 @@ class ListaItemAdapter(private val onClickListener: (ListaItem) -> Unit,
         val item = minhaLista[position]
         if (item.idImage != null) {
             try {
-                // Tenta converter para Int (se for um drawable)
                 val resId = item.idImage!!.toInt()
                 holder.binding.itemImagem.setImageResource(resId)
             } catch (e: NumberFormatException) {
-                // Se não for Int, é uma URI, então carrega a partir dela
                 holder.binding.itemImagem.setImageURI(Uri.parse(item.idImage))
             }
         } else {
-            // Caso a imagem seja nula, use o placeholder
             holder.binding.itemImagem.setImageResource(R.drawable.ic_lista_default)
         }
         holder.binding.itemTitulo.text = item.nomeLista

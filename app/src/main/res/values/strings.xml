@@ -1,20 +1,15 @@
 <resources>
-    <!-- STRINGS PÁGINA LOGIN -->
     <string name="app_name">Lista de Compras</string>
     <string name="login">Login</string>
     <string name="senha">Senha</string>
     <string name="criar_conta">Criar Conta</string>
     <string name="acessar">Acessar</string>
-
-    <!-- STRINGS PÁGINA CRIAR CONTA -->
     <string name="crie_sua_conta">Crie sua conta</string>
     <string name="digite_seu_nome">Digite seu Nome</string>
     <string name="confirme_a_senha">Confirme sua Senha</string>
     <string name="nome_completo">Nome Completo</string>
     <string name="digite_seu_email">Digite seu e-mail</string>
     <string name="cadastrar">Cadastrar</string>
-
-    <!-- STRINGS PÁGINA HOME -->
     <string name="buscar">Buscar</string>
     <string name="minhas_listas">Minhas Listas</string>
     <string name="logout">Logout</string>
@@ -34,12 +29,13 @@
     <string name="categoria">Categoria</string>
     <string name="selecione_a_categoria">Selecione a categoria</string>
 
-
     <string-array name="categorias_array">
         <item>Fruta</item>
         <item>Carne</item>
         <item>Verdura</item>
         <item>Snacks</item>
+        <item>Sapato</item>
+        <item>Roupa</item>
         <item>Outros</item>
     </string-array>
 

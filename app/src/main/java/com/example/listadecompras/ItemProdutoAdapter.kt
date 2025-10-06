@@ -22,13 +22,12 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
         val item = itensLista[position]
         holder.binding.itemImagem.setImageResource(item.idImage ?: R.drawable.ic_outros_24px)
         holder.binding.nomeItem.text = "${item.nomeItem} (${item.categoria})"
-        holder.binding.quantidadeItem.text = "${item.quantidadeItem} ${item.unidadeItem}" // Exibe quantidade e unidade
+        holder.binding.quantidadeItem.text = "${item.quantidadeItem} ${item.unidadeItem}"
 
-        // Clicar para marcar/desmarcar o item
 
         holder.binding.checkBoxItem.setOnCheckedChangeListener { _, isChecked ->
             item.checkBoxItem = isChecked
-            onSelectionChanged(getItensSelecionados().size) // Notifica a Activity
+            onSelectionChanged(getItensSelecionados().size)
         }
 
         holder.itemView.setOnClickListener {
@@ -58,7 +57,7 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
         val itensParaRemover = getItensSelecionados()
         itensLista.removeAll(itensParaRemover)
         notifyDataSetChanged()
-        onSelectionChanged(0) // Notifica a Activity que a seleção foi limpa
+        onSelectionChanged(0)
     }
 
     fun getItens(): List<ItemProduto> {

@@ -1,5 +1,6 @@
 package com.example.listadecompras
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -16,6 +17,7 @@ import com.google.gson.Gson
 
 class ListaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListaBinding
+
     private var imagemUri: Uri? = null
     private var modoEdicao = false
     private var idListaPai: Long = -1L
@@ -45,7 +47,6 @@ class ListaActivity : AppCompatActivity() {
             binding.btnAdicionar.text = "Salvar Alterações"
 
             if (imagemLista != null) {
-                // Tenta carregar a imagem de drawable ou de uma URI
                 val imageResId = resources.getIdentifier(imagemLista, "drawable", packageName)
                 if (imageResId != 0) {
                     binding.imageView.setImageResource(imageResId)
@@ -57,14 +58,8 @@ class ListaActivity : AppCompatActivity() {
         }
 
 
-        val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                binding.imageView.setImageURI(uri)
-                imagemUri = uri
-            }
-        }
         binding.btnAddImageLista.setOnClickListener {
-            pickImage.launch("image/*")
+            exibirDialogoSelecaoImagem()
         }
 
         binding.btnAdicionar.setOnClickListener {
@@ -96,6 +91,31 @@ class ListaActivity : AppCompatActivity() {
         val editor = sharedPref.edit()
         editor.putString("listas_compras", gson.toJson(listas))
         editor.apply()
+    }
+
+
+    private fun exibirDialogoSelecaoImagem() {
+        val nomesImagens = arrayOf("Shopping", "Supermercado", "Feira", "Posto de Gasolina", "Compra do mês", "Casa") // Nomes descritivos
+        val imagensPreDefinidas = arrayOf(
+            R.drawable.ic_shopping,
+            R.drawable.ic_supermercado,
+            R.drawable.ic_feira,
+            R.drawable.ic_posto_gasolina,
+            R.drawable.ic_mensal,
+            R.drawable.ic_casa
+        )
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Escolha uma imagem")
+        builder.setItems(nomesImagens) { _, which ->
+            val imagemSelecionadaId = imagensPreDefinidas[which]
+            binding.imageView.setImageResource(imagemSelecionadaId)
+
+            // Salvar a imagem selecionada como um URI de recurso (se necessário)
+            // Isso é útil para carregar depois, especialmente se a imagem for um drawable
+            imagemUri = Uri.parse("android.resource://$packageName/${imagensPreDefinidas[which]}")
+        }
+        builder.show()
     }
 
     private fun salvarAlteracoesLista(nome: String, idImage: String?) {

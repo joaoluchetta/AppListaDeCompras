@@ -51,8 +51,10 @@ class ItemCadastroActivity : AppCompatActivity() {
                     "Carne" -> putExtra("idImage", R.drawable.ic_carne_24px)
                     "Verdura" -> putExtra("idImage", R.drawable.ic_verduras_24px)
                     "Snacks" -> putExtra("idImage", R.drawable.ic_snack_24px)
+                    "Sapato" -> putExtra("idImage", R.drawable.ic_sapatos_24px)
+                    "Roupa" -> putExtra("idImage", R.drawable.ic_camiseta_24px)
                     else -> {
-                        putExtra("idImage", R.drawable.ic_outros_24px)
+                        putExtra("idImage", R.drawable.ic_outro)
                     }
                 }
 
