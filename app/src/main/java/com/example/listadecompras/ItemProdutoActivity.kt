@@ -28,14 +28,12 @@ class ItemProdutoActivity : AppCompatActivity() {
     private val cadastroLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK && result.data != null) {
-                // Extraia todos os dados do Intent
                 val nomeItem = result.data!!.getStringExtra("nomeItem") ?: return@registerForActivityResult
                 val quantidadeItem = result.data!!.getIntExtra("quantidadeItem", 0)
                 val unidadeItem = result.data!!.getStringExtra("unidadeItem") ?: ""
                 val categoriaItem = result.data!!.getStringExtra("categoriaItem") ?: ""
                 val idImage = result.data!!.getIntExtra("idImage", R.drawable.ic_outros_24px)
 
-                // Crie o objeto ItemProduto com todos os campos
                 val novoProduto = ItemProduto(
                     nomeItem = nomeItem,
                     quantidadeItem = quantidadeItem,
@@ -45,7 +43,12 @@ class ItemProdutoActivity : AppCompatActivity() {
                     idImage = idImage
                 )
 
-                adapter.adicionarItem(novoProduto)
+                // Adiciona o novo produto à lista completa
+                listaCompletaProdutos = listaCompletaProdutos + novoProduto
+
+                // Atualiza o adaptador
+                adapter.setItens(listaCompletaProdutos)
+
                 salvarProdutos()
             }
         }
@@ -144,7 +147,8 @@ class ItemProdutoActivity : AppCompatActivity() {
     private fun salvarProdutos() {
         if (idListaPai != -1L) {
             val sharedPref = getSharedPreferences("produtos_lista_${idListaPai}", Context.MODE_PRIVATE)
-            val json = gson.toJson(adapter.getItens())
+            val json = gson.toJson(listaCompletaProdutos)
+
             with(sharedPref.edit()) {
                 putString("produtos", json)
                 apply()
@@ -153,7 +157,12 @@ class ItemProdutoActivity : AppCompatActivity() {
     }
 
     private fun removerItens() {
-        adapter.removerItensSelecionados()
+        val itensParaRemover = adapter.getItensSelecionados()
+
+        listaCompletaProdutos = listaCompletaProdutos.filterNot { it in itensParaRemover }
+
+        adapter.setItens(listaCompletaProdutos)
+
         salvarProdutos()
         Snackbar.make(binding.root, "Itens removidos!", Snackbar.LENGTH_SHORT).show()
     }
