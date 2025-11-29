@@ -69,6 +69,7 @@ class HomeActivity : AppCompatActivity() {
             onClickListener = { itemClicado ->
                 val intentProdutoLista = Intent(this, ItemProdutoActivity::class.java).apply {
                     putExtra("idListaPai", itemClicado.id)
+                    putExtra("nomeLista", itemClicado.nomeLista)
                 }
                 startActivity(intentProdutoLista)
             },

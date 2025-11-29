@@ -67,6 +67,9 @@ class ItemProdutoActivity : AppCompatActivity() {
             return
         }
 
+        val nomeDaLista = intent.getStringExtra("nomeLista") ?: "Lista de Compras"
+        binding.textTituloHome.text = nomeDaLista
+
         setupRecyclerView()
         setupListeners()
         setupObservers()
