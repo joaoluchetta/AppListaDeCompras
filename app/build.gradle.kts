@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -46,17 +48,31 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.firebase.crashlytics.buildtools)
-    implementation("com.google.code.gson:gson:2.10.1")
+
+    // Testes
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+
+    // Activity KTX (apenas uma versão, a mais recente)
     implementation("androidx.activity:activity-ktx:1.9.3")
 
-    //Galeria
-    implementation("androidx.activity:activity-ktx:1.8.0")
+    // --- FIREBASE (Limpo e Organizado) ---
+    // Usando o BOM versão 33.6.0 (Estável e recente)
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+
+    // Não defina versões aqui, o BOM cuida disso
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }

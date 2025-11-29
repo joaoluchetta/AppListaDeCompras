@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel.verificarLoginAutomatico()
+
         setupWindowInsets()
         setupListeners()
         setupObservers()
@@ -50,6 +52,11 @@ class MainActivity : AppCompatActivity() {
             viewModel.login(emailLogin, senhaLogin)
         }
 
+        binding.btnEsqueciSenha.setOnClickListener {
+            val email = binding.editLogin.text.toString()
+            viewModel.recuperarSenha(email)
+        }
+
         binding.btnCadastro.setOnClickListener {
             val intentContaCadastro = Intent(this, ContaCadastroActivity::class.java)
             startActivity(intentContaCadastro)
@@ -60,16 +67,20 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
+                    // Reset visual (esconde loading e habilita botão por padrão)
+                    binding.loginProgressBar.visibility = android.view.View.GONE
+                    binding.btnAcessar.isEnabled = true
+
                     when (state) {
-                        is MainUiState.Idle -> {
-                            // Estado inicial, nada a fazer
-                        }
+                        is MainUiState.Idle -> {}
                         is MainUiState.Loading -> {
-                            // Aqui você pode mostrar um ProgressBar se tiver no layout
+                            // ATIVA O LOADING
+                            binding.loginProgressBar.visibility = android.view.View.VISIBLE
+                            binding.btnAcessar.isEnabled = false // Evita duplo clique
                         }
                         is MainUiState.Success -> {
                             navigateToHome()
-                            viewModel.resetState() // Reseta para não navegar de novo ao rotacionar
+                            viewModel.resetState()
                         }
                         is MainUiState.Error -> {
                             Toast.makeText(this@MainActivity, state.message, Toast.LENGTH_SHORT).show()

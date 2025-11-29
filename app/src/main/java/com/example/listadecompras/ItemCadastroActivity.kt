@@ -90,9 +90,10 @@ class ItemCadastroActivity : AppCompatActivity() {
 
     private fun selecionarImagem(categoria: String): Int {
         return when (categoria) {
-            "Fruta" -> R.drawable.ic_frutas_24px
             "Carne" -> R.drawable.ic_carne_24px
+            "Fruta" -> R.drawable.ic_frutas_24px
             "Verdura" -> R.drawable.ic_verduras_24px
+            "Legume" -> R.drawable.ic_legume_24px
             "Snacks" -> R.drawable.ic_snack_24px
             "Sapato" -> R.drawable.ic_sapatos_24px
             "Roupa" -> R.drawable.ic_camiseta_24px

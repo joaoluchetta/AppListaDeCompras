@@ -18,10 +18,7 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
     private val _uiState = MutableStateFlow<ProdutoUiState>(ProdutoUiState.Loading)
     val uiState: StateFlow<ProdutoUiState> = _uiState
 
-    // Cache da lista completa para filtrar localmente
     private var listaCompletaCache: List<ItemProduto> = emptyList()
-
-    // Armazena o ID da lista atual
     private var currentListaId: Long = -1L
 
     fun carregarProdutos(listaId: Long) {
@@ -30,10 +27,10 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
             _uiState.value = ProdutoUiState.Loading
             try {
                 val produtos = repository.getProdutos(listaId)
-                listaCompletaCache = produtos
+                listaCompletaCache = produtos // Atualiza cache
                 atualizarUi(produtos)
             } catch (e: Exception) {
-                _uiState.value = ProdutoUiState.Error("Erro ao carregar produtos")
+                _uiState.value = ProdutoUiState.Error("Erro ao carregar: ${e.message}")
             }
         }
     }
@@ -41,26 +38,56 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
     fun adicionarProduto(produto: ItemProduto) {
         if (currentListaId == -1L) return
 
-        val novaLista = listaCompletaCache + produto
-        salvarEAtualizar(novaLista)
+        viewModelScope.launch {
+            try {
+                // Salva no banco
+                repository.salvarProduto(currentListaId, produto)
+                // Atualiza a lista local e a tela (para não precisar buscar tudo do banco de novo)
+                listaCompletaCache = listaCompletaCache + produto
+                atualizarUi(listaCompletaCache)
+            } catch (e: Exception) {
+                _uiState.value = ProdutoUiState.Error("Erro ao adicionar: ${e.message}")
+            }
+        }
     }
 
     fun removerProdutosSelecionados() {
         if (currentListaId == -1L) return
 
-        // Mantém apenas os itens que NÃO estão marcados (checkBoxItem == false)
-        val novaLista = listaCompletaCache.filter { !it.checkBoxItem }
-        salvarEAtualizar(novaLista)
+        viewModelScope.launch {
+            try {
+                // Filtra quem deve ser deletado
+                val paraRemover = listaCompletaCache.filter { it.checkBoxItem }
+
+                // Deleta um por um no banco
+                paraRemover.forEach { item ->
+                    repository.deletarProduto(currentListaId, item)
+                }
+
+                // Atualiza lista local
+                listaCompletaCache = listaCompletaCache.filterNot { it.checkBoxItem }
+                atualizarUi(listaCompletaCache)
+            } catch (e: Exception) {
+                _uiState.value = ProdutoUiState.Error("Erro ao remover: ${e.message}")
+            }
+        }
     }
 
-    // Atualiza o estado do checkbox e salva imediatamente (melhoria em relação ao original)
     fun atualizarCheckbox(item: ItemProduto, isChecked: Boolean) {
         if (currentListaId == -1L) return
 
-        val novaLista = listaCompletaCache.map {
-            if (it.id == item.id) it.copy(checkBoxItem = isChecked) else it
+        val itemAtualizado = item.copy(checkBoxItem = isChecked)
+
+        // Atualiza Cache Local
+        listaCompletaCache = listaCompletaCache.map {
+            if (it.id == item.id) itemAtualizado else it
         }
-        salvarEAtualizar(novaLista)
+        // Não chamamos atualizarUi aqui para evitar piscar a tela,
+        // mas salvamos silenciosamente no banco
+
+        viewModelScope.launch {
+            repository.salvarProduto(currentListaId, itemAtualizado)
+        }
     }
 
     fun filtrar(query: String) {
@@ -70,16 +97,7 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
             val filtrados = listaCompletaCache.filter {
                 it.nomeItem.contains(query, ignoreCase = true)
             }
-            // Apenas atualiza a UI, não o cache
             _uiState.value = ProdutoUiState.Success(filtrados)
-        }
-    }
-
-    private fun salvarEAtualizar(novaLista: List<ItemProduto>) {
-        listaCompletaCache = novaLista
-        viewModelScope.launch {
-            repository.salvarProdutos(currentListaId, novaLista)
-            atualizarUi(novaLista)
         }
     }
 

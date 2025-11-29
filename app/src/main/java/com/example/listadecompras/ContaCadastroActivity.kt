@@ -17,7 +17,7 @@ class ContaCadastroActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityContaCadastroBinding
 
-    // Injeção da ViewModel
+    // Injeção da ViewModel com a Factory
     private val viewModel: CadastroViewModel by viewModels {
         CadastroViewModelFactory(UserRepository(this))
     }
@@ -30,6 +30,9 @@ class ContaCadastroActivity : AppCompatActivity() {
 
         setupWindowInsets()
         setupListeners()
+
+        // --- O SEGREDO ESTÁ AQUI ---
+        // Você precisa chamar esta função para começar a ouvir a ViewModel
         setupObservers()
     }
 
@@ -48,26 +51,32 @@ class ContaCadastroActivity : AppCompatActivity() {
             val senha = binding.editSenha.text.toString()
             val confirmarSenha = binding.inputSenha.text.toString()
 
-            // Passa a responsabilidade para a ViewModel
+            // Passa a bola para a ViewModel
             viewModel.cadastrar(nome, email, senha, confirmarSenha)
         }
     }
 
+    // Esta função fica vigiando o estado do cadastro
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
+                    // Reset visual
+                    binding.cadastroProgressBar.visibility = android.view.View.GONE
+                    binding.btnCadastrar.isEnabled = true
+
                     when(state) {
                         is CadastroUiState.Idle -> {}
                         is CadastroUiState.Loading -> {
-                            // Opcional: Travar botão ou mostrar loading
+                            binding.cadastroProgressBar.visibility = android.view.View.VISIBLE
+                            binding.btnCadastrar.isEnabled = false
                         }
                         is CadastroUiState.Success -> {
                             Toast.makeText(this@ContaCadastroActivity, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                            finish() // Encerra a tela e volta para o Login
+                            finish()
                         }
                         is CadastroUiState.Error -> {
-                            Toast.makeText(this@ContaCadastroActivity, state.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ContaCadastroActivity, state.message, Toast.LENGTH_LONG).show()
                         }
                     }
                 }

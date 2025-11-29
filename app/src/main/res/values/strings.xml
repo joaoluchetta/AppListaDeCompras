@@ -29,11 +29,13 @@
     <string name="categoria">Categoria</string>
     <string name="selecione_a_categoria">Selecione a categoria</string>
     <string name="excluir_lista">Excluir Lista</string>
+    <string name="esqueci_minha_senha">Esqueci minha senha</string>
 
     <string-array name="categorias_array">
-        <item>Fruta</item>
         <item>Carne</item>
+        <item>Fruta</item>
         <item>Verdura</item>
+        <item>Legume</item>
         <item>Snacks</item>
         <item>Sapato</item>
         <item>Roupa</item>

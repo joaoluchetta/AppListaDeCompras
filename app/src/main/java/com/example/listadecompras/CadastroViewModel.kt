@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-// Estados da tela de cadastro
 sealed class CadastroUiState {
     object Idle : CadastroUiState()
     object Loading : CadastroUiState()
@@ -21,14 +20,14 @@ class CadastroViewModel(private val repository: UserRepository) : ViewModel() {
     val uiState: StateFlow<CadastroUiState> = _uiState
 
     fun cadastrar(nome: String, email: String, senha: String, confirmarSenha: String) {
-        // 1. Validações
+        // Validações locais
         if (nome.isEmpty() || email.isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
             _uiState.value = CadastroUiState.Error("Preencha todos os campos")
             return
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _uiState.value = CadastroUiState.Error("E-mail inválido, por favor digite um e-mail real")
+            _uiState.value = CadastroUiState.Error("E-mail inválido")
             return
         }
 
@@ -37,14 +36,20 @@ class CadastroViewModel(private val repository: UserRepository) : ViewModel() {
             return
         }
 
-        // 2. Salvar dados
+        if (senha.length < 6) {
+            _uiState.value = CadastroUiState.Error("A senha deve ter pelo menos 6 caracteres")
+            return
+        }
+
+        // Chamada ao Firebase
         viewModelScope.launch {
             _uiState.value = CadastroUiState.Loading
             try {
-                repository.salvarUsuario(nome, email, senha)
+                // Cria Auth + Salva no Firestore
+                repository.cadastrar(nome, email, senha)
                 _uiState.value = CadastroUiState.Success
             } catch (e: Exception) {
-                _uiState.value = CadastroUiState.Error("Erro ao salvar usuário")
+                _uiState.value = CadastroUiState.Error("Erro ao cadastrar: ${e.message}")
             }
         }
     }

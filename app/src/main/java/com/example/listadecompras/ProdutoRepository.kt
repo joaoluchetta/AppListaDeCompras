@@ -1,24 +1,36 @@
 package com.example.listadecompras
 
 import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class ProdutoRepository(private val context: Context) {
-    private val gson = Gson()
 
-    // Helper para pegar o SharedPreferences correto baseado no ID da lista pai
-    private fun getPrefs(listaId: Long) =
-        context.getSharedPreferences("produtos_lista_$listaId", Context.MODE_PRIVATE)
+    private val db = FirebaseFirestore.getInstance()
 
-    fun getProdutos(listaId: Long): List<ItemProduto> {
-        val json = getPrefs(listaId).getString("produtos", null)
-        val type = object : TypeToken<List<ItemProduto>>() {}.type
-        return gson.fromJson(json, type) ?: emptyList()
+    // Helper para chegar na coleção de itens de uma lista específica
+    private fun getItemsCollection(listaId: Long) =
+        db.collection("lists").document(listaId.toString()).collection("items")
+
+    // LER todos os itens da lista
+    suspend fun getProdutos(listaId: Long): List<ItemProduto> {
+        val snapshot = getItemsCollection(listaId).get().await()
+        return snapshot.toObjects(ItemProduto::class.java)
     }
 
-    fun salvarProdutos(listaId: Long, produtos: List<ItemProduto>) {
-        val json = gson.toJson(produtos)
-        getPrefs(listaId).edit().putString("produtos", json).apply()
+    // SALVAR ou ATUALIZAR um item (serve para criar e para o checkbox)
+    suspend fun salvarProduto(listaId: Long, item: ItemProduto) {
+        getItemsCollection(listaId)
+            .document(item.id.toString())
+            .set(item)
+            .await()
+    }
+
+    // DELETAR um item
+    suspend fun deletarProduto(listaId: Long, item: ItemProduto) {
+        getItemsCollection(listaId)
+            .document(item.id.toString())
+            .delete()
+            .await()
     }
 }

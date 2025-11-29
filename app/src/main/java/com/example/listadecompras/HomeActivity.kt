@@ -90,6 +90,10 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.btnLogout.setOnClickListener {
+            viewModel.logout()
+            val intentLogin = Intent(this, MainActivity::class.java)
+            intentLogin.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intentLogin)
             finish()
         }
 

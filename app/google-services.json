@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "659995361260",
+    "project_id": "listify-app-ad38e",
+    "storage_bucket": "listify-app-ad38e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659995361260:android:e14c45123eb97dad344ac9",
+        "android_client_info": {
+          "package_name": "com.example.listadecompras"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtBktw3f89aJmNX2uGQPu0rQLwE1XKeeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
