@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
@@ -79,6 +80,11 @@ class ListaActivity : AppCompatActivity() {
                 configurarImagem(imagemLista)
                 imagemUri = try { Uri.parse(imagemLista) } catch (e: Exception) { null }
             }
+
+            binding.btnExcluir.visibility = View.VISIBLE
+            binding.btnExcluir.setOnClickListener {
+                confirmarExclusao()
+            }
         }
     }
 
@@ -93,6 +99,17 @@ class ListaActivity : AppCompatActivity() {
                 binding.imageView.setImageResource(R.drawable.ic_lista_default)
             }
         }
+    }
+
+    private fun confirmarExclusao() {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir Lista")
+            .setMessage("Tem certeza? Todos os itens desta lista serão apagados.")
+            .setPositiveButton("Sim") { _, _ ->
+                viewModel.excluirLista(idListaPai)
+            }
+            .setNegativeButton("Não", null)
+            .show()
     }
 
     private fun setupListeners() {
@@ -114,13 +131,29 @@ class ListaActivity : AppCompatActivity() {
                     when (state) {
                         is ListaUiState.Idle -> {}
                         is ListaUiState.Loading -> {}
+
                         is ListaUiState.Success -> {
+                            // Retorno de SUCESSO (Edição/Criação)
+                            val imagemFinal = imagemUri?.toString() ?: intent.getStringExtra("imagemLista")
+
                             val resultIntent = Intent().apply {
+                                putExtra("acao", "salvar") // Flag de ação
                                 putExtra("nomeLista", binding.editLista.text.toString())
+                                putExtra("imagemLista", imagemFinal)
                             }
                             setResult(RESULT_OK, resultIntent)
                             finish()
                         }
+
+                        is ListaUiState.Deleted -> {
+                            // Retorno de EXCLUSÃO
+                            val resultIntent = Intent().apply {
+                                putExtra("acao", "excluir") // Flag de ação
+                            }
+                            setResult(RESULT_OK, resultIntent)
+                            finish()
+                        }
+
                         is ListaUiState.Error -> {
                             Toast.makeText(this@ListaActivity, state.message, Toast.LENGTH_SHORT).show()
                         }

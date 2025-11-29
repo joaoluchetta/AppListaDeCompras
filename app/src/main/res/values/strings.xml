@@ -28,6 +28,7 @@
     <string name="unidade_exemplo_kg_l">Unidade(exemplos: kg,L,un)</string>
     <string name="categoria">Categoria</string>
     <string name="selecione_a_categoria">Selecione a categoria</string>
+    <string name="excluir_lista">Excluir Lista</string>
 
     <string-array name="categorias_array">
         <item>Fruta</item>

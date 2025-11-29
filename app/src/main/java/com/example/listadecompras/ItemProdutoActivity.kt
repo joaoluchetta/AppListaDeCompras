@@ -30,6 +30,8 @@ class ItemProdutoActivity : AppCompatActivity() {
     }
 
     private var idListaPai: Long = -1L
+    private var nomeListaAtual: String = ""
+    private var imagemListaAtual: String? = null
 
     // Launcher para receber o novo produto da tela de cadastro
     private val cadastroLauncher =
@@ -52,6 +54,29 @@ class ItemProdutoActivity : AppCompatActivity() {
             }
         }
 
+    private val editListLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK && result.data != null) {
+                val acao = result.data!!.getStringExtra("acao")
+
+                if (acao == "excluir") {
+                    // Se a lista foi excluída, fechamos a tela de produtos e voltamos para a Home
+                    Toast.makeText(this, "Lista excluída.", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    // Se foi salva/editada, atualizamos o título e a imagem
+                    val novoNome = result.data!!.getStringExtra("nomeLista")
+                    if (!novoNome.isNullOrEmpty()) {
+                        binding.textTituloHome.text = novoNome
+                        nomeListaAtual = novoNome
+                    }
+
+                    val novaImagem = result.data!!.getStringExtra("imagemLista")
+                    imagemListaAtual = novaImagem
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -67,8 +92,11 @@ class ItemProdutoActivity : AppCompatActivity() {
             return
         }
 
-        val nomeDaLista = intent.getStringExtra("nomeLista") ?: "Lista de Compras"
-        binding.textTituloHome.text = nomeDaLista
+        nomeListaAtual = intent.getStringExtra("nomeLista") ?: "Lista de Compras"
+        imagemListaAtual = intent.getStringExtra("imagemLista")
+
+        binding.textTituloHome.text = nomeListaAtual
+        binding.btnEditar.visibility = View.VISIBLE
 
         setupRecyclerView()
         setupListeners()
@@ -122,13 +150,14 @@ class ItemProdutoActivity : AppCompatActivity() {
             }
         })
 
-        // Botão Editar (levava para editar a lista pai)
         binding.btnEditar.setOnClickListener {
-            // Lógica para editar a lista pai (mantida simplificada aqui)
-            // O ideal seria ter um método no ShoppingListRepository para buscar uma única lista
-            // Mas como já temos o ID, podemos apenas reabrir a ListaActivity com os dados atuais
-            // ou implementar uma busca no repo.
-            Toast.makeText(this, "Edição da lista pai não implementada neste passo", Toast.LENGTH_SHORT).show()
+            val intentEditar = Intent(this, ListaActivity::class.java).apply {
+                putExtra("modoEdicao", true)
+                putExtra("idListaPai", idListaPai)
+                putExtra("nomeLista", nomeListaAtual)
+                putExtra("imagemLista", imagemListaAtual)
+            }
+            editListLauncher.launch(intentEditar)
         }
     }
 

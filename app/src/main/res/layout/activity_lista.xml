@@ -67,11 +67,27 @@
         android:layout_height="wrap_content"
         android:text="@string/adicionar"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/default_button"
         android:textColor="@color/eerieBlack"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btnExcluir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/excluir_lista"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#FF0000"
+        android:textColor="#FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/btnAdicionar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />

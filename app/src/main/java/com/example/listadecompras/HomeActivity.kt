@@ -70,6 +70,7 @@ class HomeActivity : AppCompatActivity() {
                 val intentProdutoLista = Intent(this, ItemProdutoActivity::class.java).apply {
                     putExtra("idListaPai", itemClicado.id)
                     putExtra("nomeLista", itemClicado.nomeLista)
+                    putExtra("imagemLista", itemClicado.idImage)
                 }
                 startActivity(intentProdutoLista)
             },
