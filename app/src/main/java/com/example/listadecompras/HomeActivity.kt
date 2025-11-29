@@ -1,36 +1,40 @@
 package com.example.listadecompras
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.listadecompras.databinding.ActivityHomeBinding
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
-import com.google.gson.Gson
-import android.text.TextWatcher
-import android.text.Editable
-
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var adapter: ListaItemAdapter
-    private var listasSalvas: List<ListaItem> = emptyList()
 
+    // Configuração do MVVM
+    private val viewModel: HomeViewModel by viewModels {
+        HomeViewModelFactory(ShoppingListRepository(this))
+    }
+
+    // Launcher simples apenas para saber quando voltar da criação
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data != null) {
-                val nomeLista = result.data!!.getStringExtra("nomeLista") ?: return@registerForActivityResult
-                val imagemListaString = result.data!!.getStringExtra("imagemLista")
-
-                val novaLista = ListaItem(nomeLista = nomeLista, idImage = imagemListaString )
-                adapter.adicionarItemDireto(novaLista)
+            if (result.resultCode == RESULT_OK) {
+                // Ao voltar da criação, pedimos para a ViewModel recarregar
+                viewModel.carregarListas()
             }
         }
 
@@ -39,12 +43,28 @@ class HomeActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupWindowInsets()
+
+        setupRecyclerView()
+        setupListeners()
+        setupObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Garante que a lista esteja atualizada sempre que a tela aparecer
+        viewModel.carregarListas()
+    }
+
+    private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homeScreen)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
 
+    private fun setupRecyclerView() {
         adapter = ListaItemAdapter(
             onClickListener = { itemClicado ->
                 val intentProdutoLista = Intent(this, ItemProdutoActivity::class.java).apply {
@@ -53,23 +73,15 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(intentProdutoLista)
             },
             onLongClickListener = { itemClicado ->
-                AlertDialog.Builder(this)
-                    .setTitle("Excluir Lista")
-                    .setMessage("Tem certeza que deseja excluir '${itemClicado.nomeLista}' e todos os seus itens?")
-                    .setPositiveButton("Sim") { _, _ ->
-                        removerLista(itemClicado)
-                    }
-                    .setNegativeButton("Não", null)
-                    .show()
-                true
+                exibirDialogoExclusao(itemClicado)
             }
         )
 
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = GridLayoutManager(this, 2)
+    }
 
-        carregarListas()
-
+    private fun setupListeners() {
         binding.btnAddLista.setOnClickListener {
             val intentLista = Intent(this, ListaActivity::class.java)
             launcher.launch(intentLista)
@@ -80,65 +92,48 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.inputBuscar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Filtra a lista sempre que o texto muda
-                filterList(s.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {
+                // Passa o texto para a ViewModel filtrar
+                viewModel.filtrarListas(s.toString())
             }
         })
-
     }
 
-    private fun carregarListas() {
-        val gson = Gson()
-        val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
-        val json = sharedPref.getString("listas_compras", null)
-        val tipo = object : TypeToken<List<ListaItem>>() {}.type
-        listasSalvas = gson.fromJson(json, tipo) ?: emptyList()
-        (adapter as ListaItemAdapter).setLista(listasSalvas)
-    }
-
-    private fun filterList(query: String) {
-        val filteredList = listasSalvas.filter {
-            it.nomeLista.contains(query, ignoreCase = true)
-        }
-        (adapter as ListaItemAdapter).setLista(filteredList)
-    }
-
-    private fun removerLista(item: ListaItem) {
-        val gson = Gson()
-        val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
-        val json = sharedPref.getString("listas_compras", null)
-        val tipo = object : TypeToken<MutableList<ListaItem>>() {}.type
-        val listas = gson.fromJson<MutableList<ListaItem>>(json, tipo) ?: mutableListOf()
-
-        val listaParaRemover = listas.find { it.id == item.id }
-        if (listaParaRemover != null) {
-            listas.remove(listaParaRemover)
-
-            // Salvar a lista atualizada
-            val editor = sharedPref.edit()
-            editor.putString("listas_compras", gson.toJson(listas))
-            editor.apply()
-
-            // Remover os itens associados a essa lista
-            val produtosSharedPref = getSharedPreferences("produtos_lista_${item.id}", Context.MODE_PRIVATE)
-            produtosSharedPref.edit().clear().apply()
-
-            // Notificar o adapter sobre a remoção
-            adapter.setLista(listas)
-
-            Snackbar.make(binding.root, "Lista removida!", Snackbar.LENGTH_SHORT).show()
+    private fun setupObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is HomeUiState.Loading -> {
+                            // Opcional: Mostrar ProgressBar
+                        }
+                        is HomeUiState.Empty -> {
+                            adapter.setLista(emptyList())
+                            // Opcional: Mostrar aviso de "Nenhuma lista encontrada"
+                        }
+                        is HomeUiState.Success -> {
+                            adapter.setLista(state.listas)
+                        }
+                        is HomeUiState.Error -> {
+                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        carregarListas()
+    private fun exibirDialogoExclusao(item: ListaItem) {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir Lista")
+            .setMessage("Tem certeza que deseja excluir '${item.nomeLista}' e todos os seus itens?")
+            .setPositiveButton("Sim") { _, _ ->
+                viewModel.excluirLista(item)
+                Snackbar.make(binding.root, "Lista removida!", Snackbar.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Não", null)
+            .show()
     }
 }

@@ -1,44 +1,58 @@
 package com.example.listadecompras
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.listadecompras.databinding.ActivityListaBinding
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
-import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 class ListaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListaBinding
 
+    // Injeção da ViewModel
+    private val viewModel: ListaViewModel by viewModels {
+        ListaViewModelFactory(ShoppingListRepository(this))
+    }
+
     private var imagemUri: Uri? = null
     private var modoEdicao = false
     private var idListaPai: Long = -1L
-    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityListaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupWindowInsets()
+        setupUI()
+        setupListeners()
+        setupObservers()
+    }
+
+    private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.listaScreen)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
 
+    private fun setupUI() {
         // Receber dados do Intent
         modoEdicao = intent.getBooleanExtra("modoEdicao", false)
         idListaPai = intent.getLongExtra("idListaPai", -1L)
 
-        // Se estiver no modo de edição, preencher os campos com os dados existentes
         if (modoEdicao) {
             val nomeLista = intent.getStringExtra("nomeLista")
             val imagemLista = intent.getStringExtra("imagemLista")
@@ -47,55 +61,67 @@ class ListaActivity : AppCompatActivity() {
             binding.btnAdicionar.text = "Salvar Alterações"
 
             if (imagemLista != null) {
-                val imageResId = resources.getIdentifier(imagemLista, "drawable", packageName)
-                if (imageResId != 0) {
-                    binding.imageView.setImageResource(imageResId)
-                } else {
-                    imagemUri = Uri.parse(imagemLista)
-                    binding.imageView.setImageURI(imagemUri)
-                }
+                configurarImagem(imagemLista)
+                // Mantém o valor atual caso o usuário não troque a imagem
+                imagemUri = try { Uri.parse(imagemLista) } catch (e: Exception) { null }
             }
         }
+    }
 
+    private fun configurarImagem(imagemString: String) {
+        // Tenta carregar como Resource ID (Inteiro) primeiro
+        val imageResId = resources.getIdentifier(imagemString, "drawable", packageName)
+        if (imageResId != 0) {
+            binding.imageView.setImageResource(imageResId)
+        } else {
+            // Se não for ID, tenta como URI
+            try {
+                binding.imageView.setImageURI(Uri.parse(imagemString))
+            } catch (e: Exception) {
+                binding.imageView.setImageResource(R.drawable.ic_lista_default) // Imagem padrão caso erro
+            }
+        }
+    }
 
+    private fun setupListeners() {
         binding.btnAddImageLista.setOnClickListener {
             exibirDialogoSelecaoImagem()
         }
 
         binding.btnAdicionar.setOnClickListener {
             val nomeLista = binding.editLista.text.toString()
+            // Passa para a ViewModel processar (a string da imagem pode ser null ou o toString da URI)
+            val imagemString = imagemUri?.toString() ?: intent.getStringExtra("imagemLista")
 
-            if (nomeLista.isEmpty()) {
-                Toast.makeText(this, "Preencha o campo Nome da Lista", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (modoEdicao) {
-                salvarAlteracoesLista(nomeLista, imagemUri?.toString())
-            } else {
-                val novaLista = ListaItem(nomeLista = nomeLista, idImage = imagemUri?.toString())
-                salvarNovaLista(novaLista)
-            }
-            finish()
+            viewModel.salvarLista(idListaPai, nomeLista, imagemString)
         }
     }
 
-    private fun salvarNovaLista(novaLista: ListaItem) {
-        val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
-        val json = sharedPref.getString("listas_compras", null)
-        val tipo = object : TypeToken<MutableList<ListaItem>>() {}.type
-        val listas = gson.fromJson<MutableList<ListaItem>>(json, tipo) ?: mutableListOf()
-
-        listas.add(novaLista)
-
-        val editor = sharedPref.edit()
-        editor.putString("listas_compras", gson.toJson(listas))
-        editor.apply()
+    private fun setupObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is ListaUiState.Idle -> {}
+                        is ListaUiState.Loading -> {
+                            // Bloquear botão se quiser
+                        }
+                        is ListaUiState.Success -> {
+                            // Sucesso! Retorna para a tela anterior
+                            setResult(RESULT_OK)
+                            finish()
+                        }
+                        is ListaUiState.Error -> {
+                            Toast.makeText(this@ListaActivity, state.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 
-
     private fun exibirDialogoSelecaoImagem() {
-        val nomesImagens = arrayOf("Shopping", "Supermercado", "Feira", "Posto de Gasolina", "Compra do mês", "Casa") // Nomes descritivos
+        val nomesImagens = arrayOf("Shopping", "Supermercado", "Feira", "Posto de Gasolina", "Compra do mês", "Casa")
         val imagensPreDefinidas = arrayOf(
             R.drawable.ic_shopping,
             R.drawable.ic_supermercado,
@@ -111,29 +137,10 @@ class ListaActivity : AppCompatActivity() {
             val imagemSelecionadaId = imagensPreDefinidas[which]
             binding.imageView.setImageResource(imagemSelecionadaId)
 
-            // Salvar a imagem selecionada como um URI de recurso (se necessário)
-            // Isso é útil para carregar depois, especialmente se a imagem for um drawable
-            imagemUri = Uri.parse("android.resource://$packageName/${imagensPreDefinidas[which]}")
+            // Salva o caminho como resource android
+            val uriString = "android.resource://$packageName/${imagensPreDefinidas[which]}"
+            imagemUri = Uri.parse(uriString)
         }
         builder.show()
-    }
-
-    private fun salvarAlteracoesLista(nome: String, idImage: String?) {
-        val sharedPref = getSharedPreferences("listas_prefs", Context.MODE_PRIVATE)
-        val json = sharedPref.getString("listas_compras", null)
-        val tipo = object : TypeToken<MutableList<ListaItem>>() {}.type
-        val listas = gson.fromJson<MutableList<ListaItem>>(json, tipo) ?: mutableListOf()
-
-        // Encontra a lista pelo ID
-        val listaParaEditar = listas.find { it.id == idListaPai }
-
-        if (listaParaEditar != null) {
-            listaParaEditar.nomeLista = nome
-            listaParaEditar.idImage = idImage
-        }
-
-        val editor = sharedPref.edit()
-        editor.putString("listas_compras", gson.toJson(listas))
-        editor.apply()
     }
 }

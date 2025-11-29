@@ -6,8 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listadecompras.databinding.ActivityItemProdutoBinding
 
-class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
-                         private val onSelectionChanged: (Int) -> Unit) : RecyclerView.Adapter<ItemProdutoAdapter.ItemProdutoViewHolder>() {
+class ItemProdutoAdapter(
+    private val onClickListener: (ItemProduto) -> Unit,
+    private val onSelectionChanged: (ItemProduto, Boolean) -> Unit // Passa o item e o estado
+) : RecyclerView.Adapter<ItemProdutoAdapter.ItemProdutoViewHolder>() {
+
     private val itensLista = mutableListOf<ItemProduto>()
 
     inner class ItemProdutoViewHolder(val binding: ActivityItemProdutoBinding) :
@@ -24,10 +27,15 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
         holder.binding.nomeItem.text = "${item.nomeItem} (${item.categoria})"
         holder.binding.quantidadeItem.text = "${item.quantidadeItem} ${item.unidadeItem}"
 
+        // Remove listener anterior para evitar bugs de reciclagem
+        holder.binding.checkBoxItem.setOnCheckedChangeListener(null)
+
+        holder.binding.checkBoxItem.isChecked = item.checkBoxItem
 
         holder.binding.checkBoxItem.setOnCheckedChangeListener { _, isChecked ->
             item.checkBoxItem = isChecked
-            onSelectionChanged(getItensSelecionados().size)
+            // Chama o callback passando o item e o novo valor
+            onSelectionChanged(item, isChecked)
         }
 
         holder.itemView.setOnClickListener {
@@ -35,10 +43,12 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
         }
     }
 
+    // Nota: Em MVVM puro, geralmente usamos apenas o setItens, mas mantive este
+    // caso você ainda use pontualmente. Removi a chamada do listener que causaria erro.
     fun adicionarItem(item: ItemProduto) {
         itensLista.add(item)
         notifyItemInserted(itensLista.size - 1)
-        onSelectionChanged(getItensSelecionados().size)
+        // Removido: onSelectionChanged(...) pois a assinatura mudou e a Activity já observa a lista
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -48,21 +58,13 @@ class ItemProdutoAdapter(private val onClickListener: (ItemProduto) -> Unit,
         notifyDataSetChanged()
     }
 
-    fun getItensSelecionados(): List<ItemProduto> {
-        return itensLista.filter { it.checkBoxItem }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun removerItensSelecionados() {
-        val itensParaRemover = getItensSelecionados()
-        itensLista.removeAll(itensParaRemover)
-        notifyDataSetChanged()
-        onSelectionChanged(0)
-    }
-
+    // Helper útil para a ViewModel ou Activity saberem quem está marcado
     fun getItens(): List<ItemProduto> {
         return itensLista.toList()
     }
+
+    // Métodos como removerItensSelecionados e getItensSelecionados podem ser removidos
+    // se toda a lógica de exclusão estiver na ViewModel, mas se mantiver, não chame o listener.
 
     override fun getItemCount(): Int = itensLista.size
 }
