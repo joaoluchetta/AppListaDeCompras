@@ -33,7 +33,6 @@ class ItemProdutoActivity : AppCompatActivity() {
     private var nomeListaAtual: String = ""
     private var imagemListaAtual: String? = null
 
-    // Launcher para receber o novo produto da tela de cadastro
     private val cadastroLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK && result.data != null) {
@@ -102,7 +101,6 @@ class ItemProdutoActivity : AppCompatActivity() {
         setupListeners()
         setupObservers()
 
-        // Carrega os dados iniciais
         viewModel.carregarProdutos(idListaPai)
     }
 
@@ -117,11 +115,9 @@ class ItemProdutoActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = ItemProdutoAdapter(
             onClickListener = { item ->
-                // Ação de clique simples (ex: mostrar detalhes)
                 Toast.makeText(this, "Item: ${item.nomeItem}", Toast.LENGTH_SHORT).show()
             },
             onSelectionChanged = { item, isChecked ->
-                // Atualiza na ViewModel para salvar
                 viewModel.atualizarCheckbox(item, isChecked)
                 atualizarBotaoDelete()
             }

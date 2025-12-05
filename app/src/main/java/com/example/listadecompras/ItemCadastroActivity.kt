@@ -17,7 +17,6 @@ class ItemCadastroActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityItemCadastroBinding
 
-    // ViewModel simples sem Factory (pois não tem dependências no construtor)
     private val viewModel: ItemCadastroViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

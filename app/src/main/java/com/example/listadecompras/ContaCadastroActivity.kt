@@ -31,8 +31,6 @@ class ContaCadastroActivity : AppCompatActivity() {
         setupWindowInsets()
         setupListeners()
 
-        // --- O SEGREDO ESTÁ AQUI ---
-        // Você precisa chamar esta função para começar a ouvir a ViewModel
         setupObservers()
     }
 
@@ -51,7 +49,6 @@ class ContaCadastroActivity : AppCompatActivity() {
             val senha = binding.editSenha.text.toString()
             val confirmarSenha = binding.inputSenha.text.toString()
 
-            // Passa a bola para a ViewModel
             viewModel.cadastrar(nome, email, senha, confirmarSenha)
         }
     }

@@ -42,7 +42,6 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
             try {
                 // Salva no banco
                 repository.salvarProduto(currentListaId, produto)
-                // Atualiza a lista local e a tela (para não precisar buscar tudo do banco de novo)
                 listaCompletaCache = listaCompletaCache + produto
                 atualizarUi(listaCompletaCache)
             } catch (e: Exception) {
@@ -56,15 +55,12 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
 
         viewModelScope.launch {
             try {
-                // Filtra quem deve ser deletado
                 val paraRemover = listaCompletaCache.filter { it.checkBoxItem }
 
-                // Deleta um por um no banco
                 paraRemover.forEach { item ->
                     repository.deletarProduto(currentListaId, item)
                 }
 
-                // Atualiza lista local
                 listaCompletaCache = listaCompletaCache.filterNot { it.checkBoxItem }
                 atualizarUi(listaCompletaCache)
             } catch (e: Exception) {
@@ -78,12 +74,9 @@ class ItemProdutoViewModel(private val repository: ProdutoRepository) : ViewMode
 
         val itemAtualizado = item.copy(checkBoxItem = isChecked)
 
-        // Atualiza Cache Local
         listaCompletaCache = listaCompletaCache.map {
             if (it.id == item.id) itemAtualizado else it
         }
-        // Não chamamos atualizarUi aqui para evitar piscar a tela,
-        // mas salvamos silenciosamente no banco
 
         viewModelScope.launch {
             repository.salvarProduto(currentListaId, itemAtualizado)

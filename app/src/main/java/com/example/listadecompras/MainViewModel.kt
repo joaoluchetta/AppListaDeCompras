@@ -6,6 +6,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.FirebaseNetworkException
+
 
 sealed class MainUiState {
     object Idle : MainUiState()
@@ -19,7 +23,6 @@ class MainViewModel(private val repository: UserRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Idle)
     val uiState: StateFlow<MainUiState> = _uiState
 
-    // NOVO: Verifica se já tem alguém logado ao abrir o app
     fun verificarLoginAutomatico() {
         if (repository.isUsuarioLogado()) {
             _uiState.value = MainUiState.Success
@@ -32,7 +35,7 @@ class MainViewModel(private val repository: UserRepository) : ViewModel() {
             return
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _uiState.value = MainUiState.Error("Formato de e-mail inválido")
             return
         }
@@ -40,18 +43,20 @@ class MainViewModel(private val repository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             _uiState.value = MainUiState.Loading
             try {
-                // Chama o login do Firebase
                 repository.login(email, senha)
-                // Se não cair no catch, deu certo!
                 _uiState.value = MainUiState.Success
+            } catch (e: FirebaseAuthInvalidUserException) {
+                _uiState.value = MainUiState.Error("Conta não encontrada. Cadastre-se primeiro.")
+            } catch (e: FirebaseAuthInvalidCredentialsException) {
+                _uiState.value = MainUiState.Error("E-mail ou senha incorretos.")
+            } catch (e: FirebaseNetworkException) {
+                _uiState.value = MainUiState.Error("Sem conexão com a internet.")
             } catch (e: Exception) {
-                // Pega a mensagem de erro do Firebase (ex: senha errada)
-                _uiState.value = MainUiState.Error("Falha no login: ${e.message}")
+                _uiState.value = MainUiState.Error("Erro ao entrar. Tente novamente.")
             }
         }
     }
 
-    // NOVO: Recuperação de Senha (RF001)
     fun recuperarSenha(email: String) {
         if (email.isEmpty()) {
             _uiState.value = MainUiState.Error("Digite seu e-mail para recuperar a senha.")
@@ -61,7 +66,6 @@ class MainViewModel(private val repository: UserRepository) : ViewModel() {
             _uiState.value = MainUiState.Loading
             try {
                 repository.recuperarSenha(email)
-                // Usamos o estado de erro apenas para mostrar o Toast, mas é um sucesso
                 _uiState.value = MainUiState.Error("E-mail de recuperação enviado! Verifique sua caixa de entrada.")
             } catch (e: Exception) {
                 _uiState.value = MainUiState.Error("Erro: ${e.message}")

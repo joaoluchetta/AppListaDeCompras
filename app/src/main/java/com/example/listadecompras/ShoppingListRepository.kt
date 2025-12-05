@@ -10,7 +10,6 @@ class ShoppingListRepository(private val context: Context) {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // Leitura: Busca apenas as listas do usuário logado
     suspend fun getListas(): List<ListaItem> {
         val userId = auth.currentUser?.uid ?: return emptyList()
 
@@ -19,35 +18,27 @@ class ShoppingListRepository(private val context: Context) {
             .get()
             .await()
 
-        // Converte os documentos do banco em objetos ListaItem
         return snapshot.toObjects(ListaItem::class.java)
     }
 
-    // Criar ou Atualizar (Como passamos o ID, o .set funciona para ambos)
     suspend fun salvarLista(lista: ListaItem) {
         val userId = auth.currentUser?.uid ?: return
 
-        // Garante que a lista tenha o ID do dono
         val listaComDono = lista.copy(userId = userId)
 
-        // Salva no documento com o ID da lista
         db.collection("lists")
             .document(lista.id.toString())
             .set(listaComDono)
             .await()
     }
 
-    // Remover
     suspend fun removerLista(item: ListaItem) {
         db.collection("lists")
             .document(item.id.toString())
             .delete()
             .await()
-
-        // TODO: Futuramente, aqui deletaremos também os itens da subcoleção
     }
 
-    // Em ShoppingListRepository.kt
     fun logout() {
         auth.signOut()
     }

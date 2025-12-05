@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    // Instancia a ViewModel usando a Factory
     private val viewModel: MainViewModel by viewModels {
         MainViewModelFactory(UserRepository(this))
     }
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
             val emailLogin = binding.editLogin.text.toString()
             val senhaLogin = binding.editSenha.text.toString()
 
-            // Passa a responsabilidade para a ViewModel
             viewModel.login(emailLogin, senhaLogin)
         }
 
@@ -67,16 +65,14 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    // Reset visual (esconde loading e habilita botão por padrão)
                     binding.loginProgressBar.visibility = android.view.View.GONE
                     binding.btnAcessar.isEnabled = true
 
                     when (state) {
                         is MainUiState.Idle -> {}
                         is MainUiState.Loading -> {
-                            // ATIVA O LOADING
                             binding.loginProgressBar.visibility = android.view.View.VISIBLE
-                            binding.btnAcessar.isEnabled = false // Evita duplo clique
+                            binding.btnAcessar.isEnabled = false
                         }
                         is MainUiState.Success -> {
                             navigateToHome()

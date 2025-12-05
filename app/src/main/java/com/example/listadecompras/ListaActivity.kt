@@ -30,11 +30,8 @@ class ListaActivity : AppCompatActivity() {
     private var modoEdicao = false
     private var idListaPai: Long = -1L
 
-    // 1. Launcher do Photo Picker (O padrão moderno recomendado)
-    // Não precisa de permissão no manifesto para usar este método
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
-            // Garante que o app continue tendo acesso à foto mesmo se reiniciar
             val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
             contentResolver.takePersistableUriPermission(uri, flag)
 
@@ -133,7 +130,6 @@ class ListaActivity : AppCompatActivity() {
                         is ListaUiState.Loading -> {}
 
                         is ListaUiState.Success -> {
-                            // Retorno de SUCESSO (Edição/Criação)
                             val imagemFinal = imagemUri?.toString() ?: intent.getStringExtra("imagemLista")
 
                             val resultIntent = Intent().apply {
@@ -146,9 +142,8 @@ class ListaActivity : AppCompatActivity() {
                         }
 
                         is ListaUiState.Deleted -> {
-                            // Retorno de EXCLUSÃO
                             val resultIntent = Intent().apply {
-                                putExtra("acao", "excluir") // Flag de ação
+                                putExtra("acao", "excluir")
                             }
                             setResult(RESULT_OK, resultIntent)
                             finish()
@@ -171,8 +166,6 @@ class ListaActivity : AppCompatActivity() {
         builder.setTitle("Escolha uma imagem")
         builder.setItems(nomesImagens) { _, which ->
             if (which == 0) {
-                // Chama o Photo Picker diretamente (sem checkPermission)
-                // O sistema lida com a privacidade automaticamente
                 pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             } else {
                 val imagemSelecionadaId = imagensPreDefinidas[which]

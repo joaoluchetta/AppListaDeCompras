@@ -101,7 +101,6 @@ class HomeActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Passa o texto para a ViewModel filtrar
                 viewModel.filtrarListas(s.toString())
             }
         })
@@ -113,11 +112,9 @@ class HomeActivity : AppCompatActivity() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is HomeUiState.Loading -> {
-                            // Opcional: Mostrar ProgressBar
                         }
                         is HomeUiState.Empty -> {
                             adapter.setLista(emptyList())
-                            // Opcional: Mostrar aviso de "Nenhuma lista encontrada"
                         }
                         is HomeUiState.Success -> {
                             adapter.setLista(state.listas)
